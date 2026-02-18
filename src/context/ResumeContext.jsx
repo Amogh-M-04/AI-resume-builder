@@ -15,7 +15,14 @@ export const ResumeProvider = ({ children }) => {
     // Initialize from localStorage or default
     const [resumeData, setResumeData] = useState(() => {
         const savedData = localStorage.getItem('resumeBuilderData');
-        let parsedData = savedData ? JSON.parse(savedData) : null;
+        let parsedData = null;
+
+        try {
+            parsedData = savedData ? JSON.parse(savedData) : null;
+        } catch (e) {
+            console.error("Failed to parse resume data:", e);
+            parsedData = null;
+        }
 
         if (parsedData) {
             // Migration: Skills (String -> Object)

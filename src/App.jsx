@@ -9,36 +9,40 @@ import { Builder } from './pages/Builder';
 import { Preview } from './pages/Preview';
 import { ResumeProvider } from './context/ResumeContext';
 
+import { ErrorBoundary } from './components/ErrorBoundary';
+
 function App() {
   return (
     <BrowserRouter>
-      <ResumeProvider>
-        <Routes>
-          {/* Main Application Routes */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/builder" element={<Builder />} />
-            <Route path="/preview" element={<Preview />} />
-            {/* Reusing ProofPage as requested */}
-            <Route path="/proof" element={<ProofPage />} />
-          </Route>
+      <ErrorBoundary>
+        <ResumeProvider>
+          <Routes>
+            {/* Main Application Routes */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/builder" element={<Builder />} />
+              <Route path="/preview" element={<Preview />} />
+              {/* Reusing ProofPage as requested */}
+              <Route path="/proof" element={<ProofPage />} />
+            </Route>
 
-          {/* Legacy Build Track Routes */}
-          <Route path="/rb" element={<AIResumeLayout />}>
-            <Route path="01-problem" element={<StepPage />} />
-            <Route path="02-market" element={<StepPage />} />
-            <Route path="03-architecture" element={<StepPage />} />
-            <Route path="04-hld" element={<StepPage />} />
-            <Route path="05-lld" element={<StepPage />} />
-            <Route path="06-build" element={<StepPage />} />
-            <Route path="07-test" element={<StepPage />} />
-            <Route path="08-ship" element={<StepPage />} />
-            <Route path="proof" element={<ProofPage />} />
-          </Route>
+            {/* Legacy Build Track Routes */}
+            <Route path="/rb" element={<AIResumeLayout />}>
+              <Route path="01-problem" element={<StepPage />} />
+              <Route path="02-market" element={<StepPage />} />
+              <Route path="03-architecture" element={<StepPage />} />
+              <Route path="04-hld" element={<StepPage />} />
+              <Route path="05-lld" element={<StepPage />} />
+              <Route path="06-build" element={<StepPage />} />
+              <Route path="07-test" element={<StepPage />} />
+              <Route path="08-ship" element={<StepPage />} />
+              <Route path="proof" element={<ProofPage />} />
+            </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </ResumeProvider>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ResumeProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
