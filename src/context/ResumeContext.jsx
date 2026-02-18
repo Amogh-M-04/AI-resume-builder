@@ -46,6 +46,13 @@ export const ResumeProvider = ({ children }) => {
             if (!parsedData.template) parsedData.template = 'classic';
             if (!parsedData.themeColor) parsedData.themeColor = 'hsl(168, 60%, 40%)';
 
+            // Ensure distinct objects exist (Deep merge safety for essential objects)
+            if (!parsedData.personalInfo) parsedData.personalInfo = { name: '', email: '', phone: '', location: '', title: '' };
+            if (!parsedData.links) parsedData.links = { github: '', linkedin: '', portfolio: '' };
+            if (!Array.isArray(parsedData.education)) parsedData.education = [];
+            if (!Array.isArray(parsedData.experience)) parsedData.experience = [];
+            if (!Array.isArray(parsedData.projects)) parsedData.projects = [];
+
             return parsedData;
         }
 

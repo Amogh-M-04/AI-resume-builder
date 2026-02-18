@@ -78,8 +78,8 @@ export function generatePlainText(data) {
 
 export function validateExport(data) {
     const missing = [];
-    if (!data.personalInfo.name) missing.push("Name");
-    if (data.experience.length === 0 && data.projects.length === 0) missing.push("Experience or Projects");
+    if (!data?.personalInfo?.name) missing.push("Name");
+    if ((!data?.experience || data.experience.length === 0) && (!data?.projects || data.projects.length === 0)) missing.push("Experience or Projects");
 
     return {
         isValid: missing.length === 0,
