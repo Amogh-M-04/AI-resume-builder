@@ -89,18 +89,50 @@ Core Capabilities:
                             <span className="bg-muted w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">1</span>
                             Build Process
                         </h2>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             {steps.map(step => (
-                                <div key={step.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/30 transition-colors border border-transparent hover:border-border/50">
-                                    <span className="font-medium text-sm flex items-center gap-3">
-                                        <span className="text-muted-foreground font-mono w-6 opacity-70">0{step.id}</span>
-                                        {step.label}
-                                    </span>
-                                    {stepStatus[step.id] ? (
-                                        <CheckCircle2 className="w-5 h-5 text-green-600" />
-                                    ) : (
-                                        <Circle className="w-5 h-5 text-muted-foreground/30" />
-                                    )}
+                                <div key={step.id} className="p-4 rounded-lg bg-muted/10 border border-transparent hover:border-border/50 transition-all">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="font-medium text-sm flex items-center gap-3">
+                                            <span className="text-muted-foreground font-mono w-6 opacity-70">0{step.id}</span>
+                                            {step.label}
+                                        </span>
+                                        {stepStatus[step.id] ? (
+                                            <div className="flex items-center gap-2 text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-medium">
+                                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                                Done
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-2 py-1 rounded text-xs font-medium">
+                                                <Circle className="w-3.5 h-3.5" />
+                                                Pending
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Inline Artifact Input */}
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder={`Artifact for Step ${step.id} (Link or 'Done')`}
+                                            className="flex-1 text-xs p-2 rounded border bg-background focus:ring-1 focus:ring-primary/20 outline-none"
+                                            defaultValue={localStorage.getItem(`rb_step_${step.id}_artifact`) || ''}
+                                            id={`artifact-input-${step.id}`}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                const val = document.getElementById(`artifact-input-${step.id}`).value;
+                                                if (val.trim()) {
+                                                    localStorage.setItem(`rb_step_${step.id}_artifact`, val);
+                                                    setStepStatus(prev => ({ ...prev, [step.id]: true }));
+                                                    window.dispatchEvent(new Event('storage'));
+                                                }
+                                            }}
+                                            className="px-3 py-1 bg-primary text-primary-foreground text-xs rounded font-medium hover:bg-primary/90"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
