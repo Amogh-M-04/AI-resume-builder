@@ -4,6 +4,7 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { ATSScoreMeter } from '@/components/ATSScoreMeter';
 import { calculateATSScore } from '@/lib/atsScorer';
 import { SmartTextArea } from '@/components/SmartTextArea';
+import { TagInput } from '@/components/TagInput';
 import { ThemePicker } from '@/components/ThemePicker';
 import { cn } from '@/lib/utils';
 import { Plus, Trash2, Wand2, Layout, ChevronDown, ChevronUp, Github, Globe } from 'lucide-react';
