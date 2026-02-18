@@ -3,8 +3,9 @@ import { useResume } from '@/context/ResumeContext';
 import { ResumePreview } from '@/components/ResumePreview';
 import { ATSScoreMeter } from '@/components/ATSScoreMeter';
 import { calculateATSScore } from '@/lib/atsScorer';
+import { SmartTextArea } from '@/components/SmartTextArea';
 import { cn } from '@/lib/utils';
-import { Plus, Trash2, Wand2 } from 'lucide-react';
+import { Plus, Trash2, Wand2, Layout } from 'lucide-react';
 
 export function Builder() {
     const { resumeData } = useResume();
@@ -14,9 +15,12 @@ export function Builder() {
         <div className="flex-1 flex overflow-hidden">
             {/* Left Panel - Forms (5/12 grid but flex based here) */}
             <div className="w-[40%] min-w-[400px] border-r bg-background flex flex-col h-full">
-                <div className="p-6 border-b flex items-center justify-between">
-                    <h2 className="font-serif font-bold text-xl text-primary">Content</h2>
-                    <SampleLoader />
+                <div className="p-6 border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="font-serif font-bold text-xl text-primary">Content</h2>
+                        <SampleLoader />
+                    </div>
+                    <TemplateTabs />
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
@@ -165,7 +169,13 @@ function ExperienceForm() {
                             <Input label="Company" value={exp.company} onChange={(e) => updateEntry('experience', exp.id, 'company', e.target.value)} />
                             <Input label="Duration" value={exp.duration} onChange={(e) => updateEntry('experience', exp.id, 'duration', e.target.value)} placeholder="e.g. 2021 - Present" />
                         </div>
-                        <TextArea label="Description" value={exp.description} onChange={(e) => updateEntry('experience', exp.id, 'description', e.target.value)} rows={3} />
+                        <SmartTextArea
+                            label="Description"
+                            value={exp.description}
+                            onChange={(e) => updateEntry('experience', exp.id, 'description', e.target.value)}
+                            rows={3}
+                            checkType={['action-verb', 'measurable']}
+                        />
                     </div>
                 ))}
                 {resumeData.experience.length === 0 && <p className="text-xs text-muted-foreground italic">No experience added yet.</p>}
@@ -236,7 +246,13 @@ function ProjectsForm() {
                             <Input label="Project Name" value={proj.name} onChange={(e) => updateEntry('projects', proj.id, 'name', e.target.value)} />
                             <Input label="Link" value={proj.link} onChange={(e) => updateEntry('projects', proj.id, 'link', e.target.value)} />
                         </div>
-                        <TextArea label="Description" value={proj.description} onChange={(e) => updateEntry('projects', proj.id, 'description', e.target.value)} rows={3} />
+                        <SmartTextArea
+                            label="Description"
+                            value={proj.description}
+                            onChange={(e) => updateEntry('projects', proj.id, 'description', e.target.value)}
+                            rows={3}
+                            checkType={['action-verb', 'measurable']}
+                        />
                     </div>
                 ))}
             </div>
@@ -271,5 +287,34 @@ function LinksForm() {
                 <Input label="Portfolio" value={resumeData.links.portfolio} onChange={(e) => updateLinks('portfolio', e.target.value)} placeholder="yourname.dev" />
             </div>
         </section>
+    );
+}
+// --- Components ---
+
+function TemplateTabs() {
+    const { resumeData, setTemplate } = useResume();
+    const templates = [
+        { id: 'classic', label: 'Classic' },
+        { id: 'modern', label: 'Modern' },
+        { id: 'minimal', label: 'Minimal' }
+    ];
+
+    return (
+        <div className="flex bg-muted p-1 rounded-lg">
+            {templates.map(t => (
+                <button
+                    key={t.id}
+                    onClick={() => setTemplate(t.id)}
+                    className={cn(
+                        "flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                        resumeData.template === t.id
+                            ? "bg-white text-primary shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                    )}
+                >
+                    {t.label}
+                </button>
+            ))}
+        </div>
     );
 }

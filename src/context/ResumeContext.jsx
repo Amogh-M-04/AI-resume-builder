@@ -23,6 +23,7 @@ export const ResumeProvider = ({ children }) => {
             projects: [],
             skills: '',
             links: { github: '', linkedin: '', portfolio: '' },
+            template: 'classic', // Default template
         };
     });
 
@@ -86,6 +87,7 @@ export const ResumeProvider = ({ children }) => {
             projects: [],
             skills: '',
             links: { github: '', linkedin: '', portfolio: '' },
+            template: 'classic',
         };
         setResumeData(emptyState);
     };
@@ -100,7 +102,8 @@ export const ResumeProvider = ({ children }) => {
             removeEntry,
             updateEntry,
             loadSampleData,
-            clearData
+            clearData,
+            setTemplate: (tmpl) => setResumeData(prev => ({ ...prev, template: tmpl }))
         }}>
             {children}
         </ResumeContext.Provider>
