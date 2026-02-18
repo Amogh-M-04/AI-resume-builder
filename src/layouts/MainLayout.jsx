@@ -11,7 +11,7 @@ export function MainLayout() {
 
     return (
         <div className="min-h-screen bg-background font-sans flex flex-col">
-            <header className="h-16 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-6 lg:px-12">
+            <header className="h-16 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-6 lg:px-12 no-print">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold font-serif shadow-sm">
                         AI

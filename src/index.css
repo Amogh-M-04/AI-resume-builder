@@ -4,8 +4,10 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;      /* Off-white #FAFAFA */
-    --foreground: 240 10% 3.9%;  /* Dark text */
+    --background: 0 0% 98%;
+    /* Off-white #FAFAFA */
+    --foreground: 240 10% 3.9%;
+    /* Dark text */
 
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -22,7 +24,8 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 0 72% 51%;         /* Deep Red #D32F2F style */
+    --accent: 0 72% 51%;
+    /* Deep Red #D32F2F style */
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,7 +42,64 @@
     @apply bg-background text-foreground antialiased font-sans;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif tracking-tight text-primary;
+  }
+}
+
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: white;
+  }
+
+  /* Hide UI elements */
+  .no-print,
+  nav,
+  header,
+  button,
+  .admin-panel,
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  /* Ensure preview takes full width */
+  #root,
+  .app-container,
+  main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* Specifically target the ResumePreview component container */
+  .resume-print-container {
+    width: 210mm !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    transform: none !important;
+    /* Disable scaling logic */
+    overflow: visible !important;
+  }
+
+  /* Prevent page breaks inside items */
+  section,
+  .item {
+    page-break-inside: avoid;
   }
 }
