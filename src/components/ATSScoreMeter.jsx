@@ -6,12 +6,12 @@ export function ATSScoreMeter({ score, suggestions }) {
     // Determine color based on score
     let colorClass = "text-red-500";
     let bgClass = "bg-red-500";
-    if (score >= 80) {
+    if (score > 70) {
         colorClass = "text-green-600";
         bgClass = "bg-green-600";
-    } else if (score >= 50) {
-        colorClass = "text-orange-500";
-        bgClass = "bg-orange-500";
+    } else if (score > 40) {
+        colorClass = "text-amber-500"; // Changed to amber for better visibility
+        bgClass = "bg-amber-500";
     }
 
     // Calculate circumference for circle (r=30 -> c~188.5)
@@ -59,9 +59,9 @@ export function ATSScoreMeter({ score, suggestions }) {
                 <div className="flex-1">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground mb-1">ATS Readiness Score</h3>
                     <p className="text-sm text-foreground mb-3">
-                        {score >= 80 ? "Excellent! Your resume is ready." :
-                            score >= 50 ? "Good start. Needs a few improvements." :
-                                "Needs work. Follow the suggestions below."}
+                        {score > 70 ? "Strong Resume! Ready to apply." :
+                            score > 40 ? "Getting There. Keep improving." :
+                                "Needs Work. Follow the suggestions below."}
                     </p>
                 </div>
             </div>

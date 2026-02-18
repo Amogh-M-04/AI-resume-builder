@@ -5,6 +5,8 @@ import { Download, Copy, AlertTriangle, Check } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 import { generatePlainText, validateExport } from '@/lib/exportUtils';
 import { cn } from '@/lib/utils';
+import { ATSScoreMeter } from '@/components/ATSScoreMeter';
+import { calculateATSScore } from '@/lib/atsScorer';
 
 export function Preview() {
     const componentRef = useRef();
@@ -13,6 +15,7 @@ export function Preview() {
     const [showToast, setShowToast] = useState(false);
 
     const check = validateExport(resumeData);
+    const { score, suggestions } = calculateATSScore(resumeData);
 
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -42,6 +45,11 @@ export function Preview() {
                     </div>
                 </div>
             )}
+
+            {/* ATS Score (No Print) */}
+            <div className="w-full max-w-2xl mb-8 no-print transition-all">
+                <ATSScoreMeter score={score} suggestions={suggestions} />
+            </div>
 
             <div className="mb-8 flex gap-4 no-print">
                 <button
