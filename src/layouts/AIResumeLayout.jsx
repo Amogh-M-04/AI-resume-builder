@@ -1,50 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, CheckCircle2, Clipboard } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { steps } from '@/lib/steps';
-import { ArtifactStatusControl } from '@/components/ArtifactStatusControl';
+import { checkShippedStatus } from '@/lib/submissionUtils';
+// ... other imports
 
 export function AIResumeLayout() {
-    const location = useLocation();
-    const navigate = useNavigate();
+    // ... hooks
 
-    const isProofPage = location.pathname.includes('proof');
-    const stepMatch = location.pathname.match(/\/rb\/0(\d)-/);
-    const currentStep = stepMatch ? parseInt(stepMatch[1], 10) : (isProofPage ? 9 : 1);
-
-    // Force re-render on storage change to update 'Next' button state
-    const [lastUpdate, setLastUpdate] = useState(Date.now());
+    // Badge State
+    const [isShipped, setIsShipped] = useState(false);
 
     useEffect(() => {
-        const handleStorage = () => setLastUpdate(Date.now());
-        window.addEventListener('storage', handleStorage);
-        // Custom event for same-tab updates
-        const handleCustom = () => setLastUpdate(Date.now());
-        // We'll dispatch 'storage-local' in ArtifactStatusControl if needed, or just rely on state
-        return () => window.removeEventListener('storage', handleStorage);
+        const checkStatus = () => {
+            const status = checkShippedStatus();
+            setIsShipped(status.isShipped);
+            setLastUpdate(Date.now()); // Keep existing re-render trigger
+        };
+
+        checkStatus();
+        window.addEventListener('storage', checkStatus);
+        return () => window.removeEventListener('storage', checkStatus);
     }, []);
 
-    const handleNext = () => {
-        if (currentStep < 8) {
-            const nextStepConfig = steps[currentStep]; // index is currentStep because mapped 0..7
-            navigate(`/rb/${nextStepConfig.path}`);
-        } else if (currentStep === 8) {
-            navigate('/rb/proof');
-        }
-    };
-
-    const handlePrev = () => {
-        if (isProofPage) {
-            navigate(`/rb/${steps[7].path}`);
-        } else if (currentStep > 1) {
-            const prevStepConfig = steps[currentStep - 2];
-            navigate(`/rb/${prevStepConfig.path}`);
-        }
-    };
-
-    const currentStepArtifact = currentStep <= 8 ? localStorage.getItem(`rb_step_${currentStep}_artifact`) : null;
-    const canGoNext = isProofPage ? false : !!currentStepArtifact;
+    // ... handleNext/Prev ...
 
     return (
         <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -64,11 +39,11 @@ export function AIResumeLayout() {
                 <div className="flex items-center gap-2">
                     <div className={cn(
                         "px-3 py-1 rounded-full text-xs font-medium border transition-colors",
-                        isProofPage
+                        isShipped
                             ? "bg-green-50 text-green-700 border-green-200"
                             : "bg-amber-50 text-amber-700 border-amber-200"
                     )}>
-                        {isProofPage ? 'Ready to Ship' : 'In Progress'}
+                        {isShipped ? 'Shipped' : 'In Progress'}
                     </div>
                 </div>
             </header>
