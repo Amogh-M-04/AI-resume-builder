@@ -1,10 +1,15 @@
 import React from 'react';
 import { useResume } from '@/context/ResumeContext';
 import { ResumePreview } from '@/components/ResumePreview';
+import { ATSScoreMeter } from '@/components/ATSScoreMeter';
+import { calculateATSScore } from '@/lib/atsScorer';
 import { cn } from '@/lib/utils';
 import { Plus, Trash2, Wand2 } from 'lucide-react';
 
 export function Builder() {
+    const { resumeData } = useResume();
+    const { score, suggestions } = calculateATSScore(resumeData);
+
     return (
         <div className="flex-1 flex overflow-hidden">
             {/* Left Panel - Forms (5/12 grid but flex based here) */}
@@ -15,6 +20,9 @@ export function Builder() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                    {/* ATS Score Meter */}
+                    <ATSScoreMeter score={score} suggestions={suggestions} />
+
                     <PersonalInfoForm />
                     <SummaryForm />
                     <ExperienceForm />

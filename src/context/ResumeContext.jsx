@@ -12,15 +12,24 @@ export const useResume = () => {
 };
 
 export const ResumeProvider = ({ children }) => {
-    const [resumeData, setResumeData] = useState({
-        personalInfo: { name: '', email: '', phone: '', location: '' },
-        summary: '',
-        education: [],
-        experience: [],
-        projects: [],
-        skills: '',
-        links: { github: '', linkedin: '', portfolio: '' },
+    // Initialize from localStorage or default
+    const [resumeData, setResumeData] = useState(() => {
+        const savedData = localStorage.getItem('resumeBuilderData');
+        return savedData ? JSON.parse(savedData) : {
+            personalInfo: { name: '', email: '', phone: '', location: '' },
+            summary: '',
+            education: [],
+            experience: [],
+            projects: [],
+            skills: '',
+            links: { github: '', linkedin: '', portfolio: '' },
+        };
     });
+
+    // Auto-save effect
+    React.useEffect(() => {
+        localStorage.setItem('resumeBuilderData', JSON.stringify(resumeData));
+    }, [resumeData]);
 
     const updatePersonalInfo = (field, value) => {
         setResumeData(prev => ({
@@ -69,7 +78,7 @@ export const ResumeProvider = ({ children }) => {
     };
 
     const clearData = () => {
-        setResumeData({
+        const emptyState = {
             personalInfo: { name: '', email: '', phone: '', location: '' },
             summary: '',
             education: [],
@@ -77,7 +86,8 @@ export const ResumeProvider = ({ children }) => {
             projects: [],
             skills: '',
             links: { github: '', linkedin: '', portfolio: '' },
-        });
+        };
+        setResumeData(emptyState);
     };
 
     return (
