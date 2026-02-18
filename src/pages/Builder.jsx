@@ -4,7 +4,7 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { ATSScoreMeter } from '@/components/ATSScoreMeter';
 import { calculateATSScore } from '@/lib/atsScorer';
 import { SmartTextArea } from '@/components/SmartTextArea';
-import { TagInput } from '@/components/TagInput';
+import { ThemePicker } from '@/components/ThemePicker';
 import { cn } from '@/lib/utils';
 import { Plus, Trash2, Wand2, Layout, ChevronDown, ChevronUp, Github, Globe } from 'lucide-react';
 import { useState } from 'react';
@@ -22,7 +22,6 @@ export function Builder() {
                         <h2 className="font-serif font-bold text-xl text-primary">Content</h2>
                         <SampleLoader />
                     </div>
-                    <TemplateTabs />
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
@@ -42,8 +41,11 @@ export function Builder() {
             </div>
 
             {/* Right Panel - Preview (7/12) */}
-            <div className="flex-1 bg-muted/40 p-8 overflow-hidden relative flex items-center justify-center">
-                <div className="absolute inset-0 overflow-y-auto flex items-start justify-center p-8">
+            <div className="flex-1 bg-muted/40 p-8 overflow-hidden relative flex flex-col items-center">
+                <div className="w-full max-w-[600px] mb-6 z-10">
+                    <ThemePicker />
+                </div>
+                <div className="flex-1 w-full overflow-y-auto flex items-start justify-center p-8 pt-0">
                     {/* Scale Logic Could be added here, for now default scale 0.8 to fit */}
                     <div className="transform scale-[0.65] lg:scale-[0.85] origin-top">
                         <ResumePreview />

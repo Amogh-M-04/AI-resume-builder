@@ -10,12 +10,17 @@ export function Preview() {
     const componentRef = useRef();
     const { resumeData } = useResume();
     const [copied, setCopied] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     const check = validateExport(resumeData);
 
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
         documentTitle: `Resume_${resumeData.personalInfo.name || 'Draft'}`,
+        onAfterPrint: () => {
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+        }
     });
 
     const handleCopyText = () => {
@@ -61,6 +66,14 @@ export function Preview() {
             <div className="shadow-2xl print:shadow-none resume-print-container">
                 <ResumePreview ref={componentRef} />
             </div>
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300 z-50">
+                    <Check className="w-4 h-4 text-green-400" />
+                    <span className="font-medium text-sm">PDF export ready! Check your downloads.</span>
+                </div>
+            )}
         </div>
     );
 }

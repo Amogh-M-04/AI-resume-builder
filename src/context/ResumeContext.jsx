@@ -44,6 +44,7 @@ export const ResumeProvider = ({ children }) => {
 
             // Ensure template defaults
             if (!parsedData.template) parsedData.template = 'classic';
+            if (!parsedData.themeColor) parsedData.themeColor = 'hsl(168, 60%, 40%)';
 
             return parsedData;
         }
@@ -57,6 +58,7 @@ export const ResumeProvider = ({ children }) => {
             skills: { technical: [], soft: [], tools: [] },
             links: { github: '', linkedin: '', portfolio: '' },
             template: 'classic',
+            themeColor: 'hsl(168, 60%, 40%)', // Default Teal
         };
     });
 
@@ -121,6 +123,7 @@ export const ResumeProvider = ({ children }) => {
             skills: { technical: [], soft: [], tools: [] },
             links: { github: '', linkedin: '', portfolio: '' },
             template: 'classic',
+            themeColor: 'hsl(168, 60%, 40%)',
         };
         setResumeData(emptyState);
     };
@@ -136,7 +139,8 @@ export const ResumeProvider = ({ children }) => {
             updateEntry,
             loadSampleData,
             clearData,
-            setTemplate: (tmpl) => setResumeData(prev => ({ ...prev, template: tmpl }))
+            setTemplate: (tmpl) => setResumeData(prev => ({ ...prev, template: tmpl })),
+            setThemeColor: (color) => setResumeData(prev => ({ ...prev, themeColor: color }))
         }}>
             {children}
         </ResumeContext.Provider>
