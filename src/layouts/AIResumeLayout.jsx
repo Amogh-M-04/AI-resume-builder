@@ -1,8 +1,21 @@
+import React, { useEffect, useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, CheckCircle2, Clipboard } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { steps } from '@/lib/steps';
+import { ArtifactStatusControl } from '@/components/ArtifactStatusControl';
 import { checkShippedStatus } from '@/lib/submissionUtils';
-// ... other imports
 
 export function AIResumeLayout() {
-    // ... hooks
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const isProofPage = location.pathname.includes('proof');
+    const stepMatch = location.pathname.match(/\/rb\/0(\d)-/);
+    const currentStep = stepMatch ? parseInt(stepMatch[1], 10) : (isProofPage ? 9 : 1);
+
+    // Force re-render on storage change to update 'Next' button state
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
 
     // Badge State
     const [isShipped, setIsShipped] = useState(false);
