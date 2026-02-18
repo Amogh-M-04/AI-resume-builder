@@ -15,15 +15,48 @@ export const ResumeProvider = ({ children }) => {
     // Initialize from localStorage or default
     const [resumeData, setResumeData] = useState(() => {
         const savedData = localStorage.getItem('resumeBuilderData');
-        return savedData ? JSON.parse(savedData) : {
+        let parsedData = savedData ? JSON.parse(savedData) : null;
+
+        if (parsedData) {
+            // Migration: Skills (String -> Object)
+            if (typeof parsedData.skills === 'string') {
+                const oldSkills = parsedData.skills.split(',').filter(s => s.trim().length > 0).map(s => s.trim());
+                parsedData.skills = {
+                    technical: oldSkills,
+                    soft: [],
+                    tools: []
+                };
+            }
+            // Ensure skills object structure if it exists but might be partial (safety)
+            if (!parsedData.skills || typeof parsedData.skills !== 'object') {
+                parsedData.skills = { technical: [], soft: [], tools: [] };
+            }
+
+            // Migration: Projects (Add new fields)
+            if (parsedData.projects) {
+                parsedData.projects = parsedData.projects.map(p => ({
+                    ...p,
+                    techStack: Array.isArray(p.techStack) ? p.techStack : [],
+                    liveUrl: p.liveUrl || '',
+                    github: p.github || ''
+                }));
+            }
+
+            // Ensure template defaults
+            if (!parsedData.template) parsedData.template = 'classic';
+
+            return parsedData;
+        }
+
+        return {
             personalInfo: { name: '', email: '', phone: '', location: '' },
             summary: '',
             education: [],
             experience: [],
             projects: [],
-            skills: '',
+            skills: { technical: [], soft: [], tools: [] },
             links: { github: '', linkedin: '', portfolio: '' },
-            template: 'classic', // Default template
+            template: 'classic',
         };
     });
 
@@ -85,7 +118,7 @@ export const ResumeProvider = ({ children }) => {
             education: [],
             experience: [],
             projects: [],
-            skills: '',
+            skills: { technical: [], soft: [], tools: [] },
             links: { github: '', linkedin: '', portfolio: '' },
             template: 'classic',
         };

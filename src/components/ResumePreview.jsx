@@ -143,9 +143,33 @@ export const ResumePreview = forwardRef(({ className, scale = 1 }, ref) => {
                             {projects.map(proj => (
                                 <div key={proj.id}>
                                     <div className="flex justify-between items-baseline mb-1">
-                                        <h3 className="font-bold text-base">{proj.name}</h3>
-                                        {proj.link && <span className="text-xs text-neutral-500">{proj.link}</span>}
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-base">{proj.name}</h3>
+                                            <div className="flex gap-2">
+                                                {proj.liveUrl && (
+                                                    <a href={proj.liveUrl} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-black">
+                                                        <Globe className="w-3 h-3" />
+                                                    </a>
+                                                )}
+                                                {proj.github && (
+                                                    <a href={proj.github} target="_blank" rel="noopener noreferrer" className="text-neutral-500 hover:text-black">
+                                                        <Github className="w-3 h-3" />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    {proj.techStack && proj.techStack.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mb-1.5">
+                                            {proj.techStack.map((tech, idx) => (
+                                                <span key={idx} className="px-1.5 py-0.5 bg-neutral-100 text-[10px] font-medium rounded text-neutral-600 border border-neutral-200">
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+
                                     <p className="text-sm leading-relaxed text-neutral-800">
                                         {proj.description}
                                     </p>
@@ -178,16 +202,56 @@ export const ResumePreview = forwardRef(({ className, scale = 1 }, ref) => {
                 )}
 
                 {/* Skills */}
-                {skills && (
+                {skills && (typeof skills === 'object' || typeof skills === 'string') && (
                     <section>
                         <h2 className={cn(
                             "text-sm font-bold uppercase tracking-widest mb-3",
                             !isMinimal && "border-b border-neutral-200 pb-1",
                             isModern && "text-lg tracking-tight border-black border-b-2"
                         )}>Skills</h2>
-                        <p className="text-sm leading-relaxed text-neutral-800">
-                            {skills}
-                        </p>
+
+                        {typeof skills === 'string' ? (
+                            <p className="text-sm leading-relaxed text-neutral-800">{skills}</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {skills.technical?.length > 0 && (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-xs font-bold w-24 flex-shrink-0 uppercase text-neutral-500">Technical</span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {skills.technical.map((s, i) => (
+                                                <span key={i} className="px-2 py-0.5 bg-neutral-100 text-xs font-medium rounded-md text-neutral-700">
+                                                    {s}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {skills.tools?.length > 0 && (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-xs font-bold w-24 flex-shrink-0 uppercase text-neutral-500">Tools</span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {skills.tools.map((s, i) => (
+                                                <span key={i} className="px-2 py-0.5 bg-neutral-100 text-xs font-medium rounded-md text-neutral-700">
+                                                    {s}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                {skills.soft?.length > 0 && (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-xs font-bold w-24 flex-shrink-0 uppercase text-neutral-500">Soft Skills</span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {skills.soft.map((s, i) => (
+                                                <span key={i} className="px-2 py-0.5 bg-neutral-100 text-xs font-medium rounded-md text-neutral-700">
+                                                    {s}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </section>
                 )}
             </div>

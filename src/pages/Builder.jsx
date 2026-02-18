@@ -4,8 +4,10 @@ import { ResumePreview } from '@/components/ResumePreview';
 import { ATSScoreMeter } from '@/components/ATSScoreMeter';
 import { calculateATSScore } from '@/lib/atsScorer';
 import { SmartTextArea } from '@/components/SmartTextArea';
+import { TagInput } from '@/components/TagInput';
 import { cn } from '@/lib/utils';
-import { Plus, Trash2, Wand2, Layout } from 'lucide-react';
+import { Plus, Trash2, Wand2, Layout, ChevronDown, ChevronUp, Github, Globe } from 'lucide-react';
+import { useState } from 'react';
 
 export function Builder() {
     const { resumeData } = useResume();
@@ -221,38 +223,97 @@ function EducationForm() {
 
 function ProjectsForm() {
     const { resumeData, addEntry, removeEntry, updateEntry } = useResume();
+    const [expanded, setExpanded] = useState(null);
+
+    const toggleExpand = (id) => {
+        setExpanded(expanded === id ? null : id);
+    };
+
     return (
         <section>
             <div className="flex items-center justify-between mb-4 pb-2 border-b">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Projects</h3>
                 <button
-                    onClick={() => addEntry('projects', { name: '', link: '', description: '' })}
+                    onClick={() => {
+                        const newId = Date.now();
+                        addEntry('projects', { id: newId, name: 'New Project', techStack: [], liveUrl: '', github: '', description: '' });
+                        setExpanded(newId);
+                    }}
                     className="p-1 hover:bg-muted rounded-full text-primary"
                 >
                     <Plus className="w-4 h-4" />
                 </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {resumeData.projects.map(proj => (
-                    <div key={proj.id} className="p-4 bg-muted/20 border rounded-lg space-y-3 relative group">
-                        <button
-                            onClick={() => removeEntry('projects', proj.id)}
-                            className="absolute top-3 right-3 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                    <div key={proj.id} className="bg-muted/20 border rounded-lg overflow-hidden transition-all">
+                        <div
+                            className="p-3 flex items-center justify-between cursor-pointer hover:bg-muted/40"
+                            onClick={() => toggleExpand(proj.id)}
                         >
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Input label="Project Name" value={proj.name} onChange={(e) => updateEntry('projects', proj.id, 'name', e.target.value)} />
-                            <Input label="Link" value={proj.link} onChange={(e) => updateEntry('projects', proj.id, 'link', e.target.value)} />
+                            <span className="font-semibold text-sm">{proj.name || 'Untitled Project'}</span>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); removeEntry('projects', proj.id); }}
+                                    className="text-muted-foreground hover:text-destructive p-1"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                                {expanded === proj.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            </div>
                         </div>
-                        <SmartTextArea
-                            label="Description"
-                            value={proj.description}
-                            onChange={(e) => updateEntry('projects', proj.id, 'description', e.target.value)}
-                            rows={3}
-                            checkType={['action-verb', 'measurable']}
-                        />
+
+                        {expanded === proj.id && (
+                            <div className="p-4 pt-0 space-y-3 border-t bg-white/50">
+                                <Input label="Project Title" value={proj.name} onChange={(e) => updateEntry('projects', proj.id, 'name', e.target.value)} />
+
+                                <TagInput
+                                    label="Tech Stack"
+                                    tags={proj.techStack || []}
+                                    onTagsChange={(newTags) => updateEntry('projects', proj.id, 'techStack', newTags)}
+                                    placeholder="React, Node.js..."
+                                />
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5 container-input">
+                                        <label className="text-xs font-medium flex items-center gap-1"><Globe className="w-3 h-3" /> Live URL</label>
+                                        <input
+                                            className="w-full px-3 py-2 bg-white border rounded-md text-sm focus:ring-1 focus:ring-primary/20"
+                                            value={proj.liveUrl || ''}
+                                            onChange={(e) => updateEntry('projects', proj.id, 'liveUrl', e.target.value)}
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5 container-input">
+                                        <label className="text-xs font-medium flex items-center gap-1"><Github className="w-3 h-3" /> GitHub URL</label>
+                                        <input
+                                            className="w-full px-3 py-2 bg-white border rounded-md text-sm focus:ring-1 focus:ring-primary/20"
+                                            value={proj.github || ''}
+                                            onChange={(e) => updateEntry('projects', proj.id, 'github', e.target.value)}
+                                            placeholder="https://github.com/..."
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="relative">
+                                    <SmartTextArea
+                                        label="Description"
+                                        value={proj.description}
+                                        onChange={(e) => {
+                                            if (e.target.value.length <= 200) {
+                                                updateEntry('projects', proj.id, 'description', e.target.value);
+                                            }
+                                        }}
+                                        rows={3}
+                                        checkType={['action-verb', 'measurable']}
+                                    />
+                                    <span className={cn("absolute top-0 right-0 text-[10px]", (proj.description?.length || 0) > 180 ? "text-orange-500" : "text-muted-foreground")}>
+                                        {proj.description?.length || 0}/200
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -262,16 +323,61 @@ function ProjectsForm() {
 
 function SkillsForm() {
     const { resumeData, updateField } = useResume();
+    const [loading, setLoading] = useState(false);
+
+    // Ensure skills is object (migration safety)
+    const skills = typeof resumeData.skills === 'object' ? resumeData.skills : { technical: [], soft: [], tools: [] };
+
+    const updateCategory = (category, newTags) => {
+        updateField('skills', { ...skills, [category]: newTags });
+    };
+
+    const suggestSkills = () => {
+        setLoading(true);
+        setTimeout(() => {
+            updateField('skills', {
+                technical: [...new Set([...skills.technical, "TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL"])],
+                soft: [...new Set([...skills.soft, "Team Leadership", "Problem Solving"])],
+                tools: [...new Set([...skills.tools, "Git", "Docker", "AWS"])]
+            });
+            setLoading(false);
+        }, 1000);
+    };
+
     return (
         <section>
-            <SectionHeader title="Skills" />
-            <TextArea
-                label="Skills (Comma separated)"
-                value={resumeData.skills}
-                onChange={(e) => updateField('skills', e.target.value)}
-                placeholder="React, Node.js, Design Systems..."
-                rows={2}
-            />
+            <div className="flex items-center justify-between mb-4">
+                <SectionHeader title="Skills" />
+                <button
+                    onClick={suggestSkills}
+                    disabled={loading}
+                    className="text-xs flex items-center gap-1 text-primary hover:underline disabled:opacity-50"
+                >
+                    <Wand2 className={cn("w-3 h-3", loading && "animate-spin")} />
+                    {loading ? "Loading..." : "Suggest Skills"}
+                </button>
+            </div>
+
+            <div className="space-y-4">
+                <TagInput
+                    label="Technical Skills"
+                    tags={skills.technical || []}
+                    onTagsChange={(tags) => updateCategory('technical', tags)}
+                    placeholder="React, Java, Python..."
+                />
+                <TagInput
+                    label="Tools & Technologies"
+                    tags={skills.tools || []}
+                    onTagsChange={(tags) => updateCategory('tools', tags)}
+                    placeholder="Git, Jira, Figma..."
+                />
+                <TagInput
+                    label="Soft Skills"
+                    tags={skills.soft || []}
+                    onTagsChange={(tags) => updateCategory('soft', tags)}
+                    placeholder="Leadership, Communication..."
+                />
+            </div>
         </section>
     );
 }

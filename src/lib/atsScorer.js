@@ -38,12 +38,19 @@ export function calculateATSScore(data) {
     }
 
     // 4. Skills (>= 8 items) (+10)
-    // Handle comma-separated string
-    const skillsList = skills ? skills.split(',').filter(s => s.trim().length > 0) : [];
-    if (skillsList.length >= 8) {
+    // Handle object structure { technical: [], soft: [], tools: [] }
+    let skillsCount = 0;
+    if (typeof skills === 'object' && skills !== null) {
+        skillsCount = (skills.technical?.length || 0) + (skills.soft?.length || 0) + (skills.tools?.length || 0);
+    } else if (typeof skills === 'string') {
+        // Fallback for any legacy edge cases
+        skillsCount = skills.split(',').filter(s => s.trim().length > 0).length;
+    }
+
+    if (skillsCount >= 8) {
         score += 10;
     } else {
-        suggestions.push(`Add more skills (target 8+, currently ${skillsList.length}).`);
+        suggestions.push(`Add more skills (target 8+, currently ${skillsCount}).`);
     }
 
     // 6. Links (GitHub or LinkedIn) (+10)

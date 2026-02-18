@@ -39,7 +39,14 @@ export function generatePlainText(data) {
     if (projects.length > 0) {
         lines.push('PROJECTS');
         projects.forEach(proj => {
-            lines.push(`${proj.name} ${proj.link ? `(${proj.link})` : ''}`);
+            let header = proj.name;
+            const links = [proj.liveUrl, proj.github].filter(Boolean).join(' | ');
+            if (links) header += ` (${links})`;
+
+            lines.push(header);
+            if (proj.techStack && proj.techStack.length > 0) {
+                lines.push(`Tech Stack: ${proj.techStack.join(', ')}`);
+            }
             if (proj.description) lines.push(proj.description);
             lines.push('');
         });
@@ -57,7 +64,13 @@ export function generatePlainText(data) {
     // Skills
     if (skills) {
         lines.push('SKILLS');
-        lines.push(skills);
+        if (typeof skills === 'string') {
+            lines.push(skills);
+        } else {
+            if (skills.technical?.length > 0) lines.push(`Technical: ${skills.technical.join(', ')}`);
+            if (skills.tools?.length > 0) lines.push(`Tools: ${skills.tools.join(', ')}`);
+            if (skills.soft?.length > 0) lines.push(`Soft Skills: ${skills.soft.join(', ')}`);
+        }
     }
 
     return lines.join('\n');
